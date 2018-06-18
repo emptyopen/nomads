@@ -8,6 +8,73 @@ Stats/inventory are displayed on takaomatt.com
 starts with 10x10 grid?
 '''
 
+import random
+import string
+import datetime as dt
+import sys
+import os
+import numpy as np
+import pygame as pg
+from pygame.locals import QUIT
+import textwrap
+pg.font.init()
+
+FONT = 'aerxtablets'
+FONTSIZE = 28
+
+
+class Game:
+
+# ----------------------------------------------------------------------------------------------------------------------------------- PREP
+
+    def __init__(self):
+
+        # window
+        self.caption = "The Nomads"
+        self.fps = 60
+        self.clock = pg.time.Clock()
+        self.grid_size_pixel = 800
+        self.screen = pg.display.set_mode((1200, 800))
+        self.background = pg.image.load('img/white-background.png')
+
+        self.players = []
+        self.num_players = len(self.players)
+        self.grid_size = 5
+
+
+    def main(self):
+
+        pg.init()
+        pg.display.set_caption(self.caption)
+
+        while True:
+            self.update_state()
+            self.update_display()
+            pg.display.update()
+            self.clock.tick(self.fps)
+            for event in pg.event.get():
+                if event.type == QUIT:
+                    pg.quit()
+                    sys.exit
+
+    def update_state(self):
+        pass
+
+    def update_display(self):
+
+        self.screen.blit(self.background, (0,0))
+        self.draw_board()
+
+    def draw_board(self):
+        interval = self.grid_size_pixel / round(self.grid_size)
+        for i in range(1, self.grid_size):
+            print(i)
+            pg.draw.line(self.screen, (0, 0, 0), (i * interval, 0), (i * interval, self.grid_size_pixel))
+            pg.draw.line(self.screen, (0, 0, 0), (0, i * interval), (self.grid_size_pixel, i * interval))
+
+    def add_player(self, player):
+
+
 class Player(object):
 
     def __init__(self):
@@ -23,68 +90,8 @@ class Player(object):
     def change_character():
         pass
 
+class Boss():
+    pass
 
-class Game:
-
-# ----------------------------------------------------------------------------------------------------------------------------------- PREP
-
-    def __init__(self):
-
-        # window
-        self.caption = "The Nomads"
-        self.fps = 60
-        self.clock = pygame.time.Clock()
-        self.screen = pygame.display.set_mode((1800, 717))  # (890, 503) , 214 vert for black, 20 margin
-        self.background = pygame.image.load('pics/n-wall.png')
-        self.one_off = True # toggler that ensures screen updates after state update?
-
-
-
-
-# -------------------------------------------------------------------------------------------------------------------- EXECUTE
-
-    def main(self):
-
-        # setup
-        pygame.init()
-        pygame.display.set_caption(self.caption)
-        self.map_components()
-        self.place_components()
-        if not DEBUG:
-            self.create_basetime()
-
-        while True: # main game loop
-
-            self.update_state()
-
-            # update state of game continuously
-            for event in pygame.event.get():
-
-                if event.type == QUIT:
-                    pygame.quit()
-                    sys.exit
-
-            self.update_display()
-
-
-    def update_state(self):
-
-        pass
-
-
-# --------------------------------------------------------------------------------------------------------- DRAW
-
-    def update_display(self):
-
-        self.screen.blit(self.background, (self.p_offset[0], self.p_offset[1]))
-
-
-    # blacksword.tff
-
-    def draw_message(self, message, coord = (100, 100), preset = None, font = FONT, font_size = FONTSIZE, text_color = (160, 190, 255), background_color = None):
-        if preset == 'help':
-            background_color = (0, 0, 0)
-            text_color = (255, 255, 255)
-        if preset == 'bottom':
-            background_color = None
-        self.screen.blit(pygame.font.SysFont(font, font_size).render(message, True, text_color, background_color), coord)
+G = Game()
+G.main()
