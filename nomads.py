@@ -21,10 +21,10 @@ pg.font.init()
 
 FONT = 'aerxtablets'
 FONTSIZE = 28
+DEBUG = True
 
 
 class Game:
-
 # ----------------------------------------------------------------------------------------------------------------------------------- PREP
 
     def __init__(self):
@@ -40,7 +40,7 @@ class Game:
         self.players = []
         self.num_players = len(self.players)
         self.grid_size = 5
-
+        self.checkpoint = dt.datetime.now()
 
     def main(self):
 
@@ -57,22 +57,43 @@ class Game:
                     pg.quit()
                     sys.exit
 
+# STATE -----------------------------------------------------------------------
+
     def update_state(self):
-        pass
+
+        # Decide action
+        if dt.datetime.now() - self.checkpoint > dt.timedelta(seconds=10):
+            if DEBUG:
+                temp_action = raw_input('next action: ').lower()
+                self.action = temp_action
+            else:
+                self.action = self.parse_twitch_chat_file()
+            self.checkpoint = dt.datetime.now()
+
+# DISPLAY -----------------------------------------------------------------------------------------------------------------------------------
 
     def update_display(self):
 
         self.screen.blit(self.background, (0,0))
         self.draw_board()
+        background_color = (0, 0, 0)
+        text_color = (255, 255, 255)
+        time_left = str(10 - (dt.datetime.now() - self.checkpoint).seconds)
+        font_object = pg.font.SysFont(FONT, FONTSIZE).render(time_left, True, text_color, background_color)
+        self.screen.blit(font_object, (810, 20))
+
+
 
     def draw_board(self):
         interval = self.grid_size_pixel / round(self.grid_size)
         for i in range(1, self.grid_size):
-            print(i)
             pg.draw.line(self.screen, (0, 0, 0), (i * interval, 0), (i * interval, self.grid_size_pixel))
             pg.draw.line(self.screen, (0, 0, 0), (0, i * interval), (self.grid_size_pixel, i * interval))
 
     def add_player(self, player):
+        self.players.append(player)
+
+
 
 
 class Player(object):
@@ -83,6 +104,8 @@ class Player(object):
         self.inventory = []
         self.equipped = {'head':None, 'chest':None, 'arms':None, 'legs':None, 'misc1':None, 'misc2':None}
         self.level = 1
+        self.health = 10
+        self.mana = 0
 
     def reset_character():
         pass
@@ -90,8 +113,13 @@ class Player(object):
     def change_character():
         pass
 
+
+
 class Boss():
-    pass
+
+    def __init__(self, health, abilities):
+        self.health = health
+        self.abilities = abilities
 
 G = Game()
 G.main()
